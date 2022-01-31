@@ -12,6 +12,17 @@ import (
 // Complete the minimumSwaps function below.
 func minimumSwaps(arr []int32) int32 {
 	var swaps int32
+	// create map for fast looking value-index pair
+	numIndexMap := make(map[int32]int32)
+
+	// seeding map
+	for i, v := range arr {
+		if v == int32(i+1) {
+			continue
+		}
+		numIndexMap[v] = int32(i)
+	}
+
 	for i, v := range arr {
 		// make index more intuitively match with the proper value
 		pos := int32(i) + 1
@@ -46,30 +57,18 @@ func minimumSwaps(arr []int32) int32 {
 			var actPos int32 = -1
 			var actPairPos int32 = -1
 
-			// finding two in one to cut time complexity
-			for j := pos; j < int32(len(arr)); j++ {
-				if actPos == -1 && arr[j] == pos {
-					actPos = j
-				} else if actPos != -1 && arr[j] == actPos+1 {
-					actPairPos = j
-					break
-				}
-			}
-
-			// if not found yet, find again start with pos till actPos which previously found
-			if actPairPos == -1 {
-				for j := pos; j < actPos; j++ {
-					if arr[j] == actPos+1 {
-						actPairPos = j
-						break
-					}
-				}
-			}
+			actPos = numIndexMap[pos]
+			actPairPos = numIndexMap[actPos+1]
 
 			// Perform best case
 			arr[i], arr[actPairPos] = arr[actPairPos], arr[i]
 			arr[i], arr[actPos] = arr[actPos], arr[i]
 			swaps += 2
+
+			// IMPORTANT: updating map due above operation alter position of a number that still need to be referenced
+			numIndexMap[v] = actPairPos
+
+			// Note to myself, please considering that referenced data should be altered if the corelated data is altered too
 		}
 	}
 	return swaps
