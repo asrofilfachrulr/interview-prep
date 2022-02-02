@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Complete the freqQuery function below.
+// Warning: The code is really bad and have much redudancies. Would be optimmized soon inshaallah
 func freqQuery(queries [][]int32) []int32 {
 	result := []int32{}
 	data := make(map[int32]int32)
