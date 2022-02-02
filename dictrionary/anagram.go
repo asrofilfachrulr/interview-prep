@@ -48,57 +48,59 @@ func howMuchAnagram(substrings []string) int32 {
 	for i := 0; i < len(substrings)-1; i++ {
 		s := substrings[i]
 		// fmt.Println("s now: ", s)
-		if i == len(substrings)-1 {
-			break
-		}
 		// create temp map for chars of s
-		charMap := make(map[string]int32)
+		charMap := make(map[rune]int32)
 		for _, c := range s {
-			ch := string(c)
-			if _, f := charMap[ch]; f {
-				charMap[ch] += 1
+			if _, f := charMap[c]; f {
+				charMap[c] += 1
 			} else {
-				charMap[ch] = 1
+				charMap[c] = 1
 			}
 		}
+
 		// fmt.Println(charMap)
 		// check if every word meet, has identical composite / anagram
 		for j := i + 1; j < len(substrings); j++ {
-			tempMap := make(map[string]int32)
-			for k := range charMap {
-				tempMap[k] = charMap[k]
+			if s == substrings[j] {
+				num += 1
+				continue
 			}
 
 			// fmt.Println("comparing with :", substrings[j])
 			// fmt.Println(tempMap)
+			isZero := true
+			tempMap := make(map[rune]int32)
 			for _, c := range substrings[j] {
-				ch := string(c)
-				if _, f := tempMap[ch]; f {
-					if tempMap[ch] == 0 {
-						// has not enough pair
-						break
+				if _, f := charMap[c]; f {
+					if _, f := tempMap[c]; f {
+						tempMap[c] += 1
+					} else {
+						tempMap[c] = 1
 					}
-					tempMap[ch] -= 1
 				} else {
 					// char has not pair
-					break
-				}
-			}
-			// check for every key (a.k.a char) in charMap must be zero means has its pair
-			isZero := true
-			for k := range charMap {
-				if tempMap[k] != 0 {
 					isZero = false
 					break
 				}
 			}
+			// check for every key (a.k.a char) in charMap must be zero means has its pair
 			if isZero {
-				num += 1
+				for k := range charMap {
+					if charMap[k] != tempMap[k] {
+						isZero = false
+						break
+					}
+				}
+				if isZero {
+					num += 1
+				}
 			}
-			// fmt.Println(tempMap, "\n")
+			// fmt.Println(charMap, "\n")
 		}
 	}
 	return num
+
+	// note to myself : find a way to eliminating for loop
 }
 
 func main() {
